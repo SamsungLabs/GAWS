@@ -1,30 +1,41 @@
-<!---
-Copyright 2023 The HuggingFace Team. All rights reserved.
+<h1 align="center">
+  <p>
+    Grouped Adaptive Weight Sharing (GAWS): An Inference-Efficient Adaptation Method for Large Language Models
+  </p>
+</h1>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+<p align="left">
+  <b> This work has been accepted to ACL 2026 [Findings].</b>
+</p>
 
-    http://www.apache.org/licenses/LICENSE-2.0
+<p align="left">
+  <a href="https://aclanthology.org/2026.findings-acl.1590/">
+    📝 Paper
+  </a>
+</p>
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
+---
 
-<h1 align="center"> <p> GAWS: Grouped Adaptive Weight Sharing</p></h1>
+## 📌 Overview
 
-</h3>
+Although **Low-Rank Adaptation (LoRA)** has revolutionized parameter-efficient fine-tuning (PEFT), it introduces additional inference overhead due to the extra computation required by adapter layers. Most existing approaches focus primarily on improving accuracy or reducing the number of trainable parameters, while inference efficiency—especially in the **unmerged adapter setting**—remains underexplored.
 
-## Description
+In this work, we study the inference bottlenecks of LoRA adapters and identify **segmented function calls and adapter execution overhead** as major contributors to latency on GPUs. To address this issue, we propose:
 
-Adapter-based parameter-efficient fine-tuning enables multitask learning by attaching lightweight, task-specific adapters to a shared base model. However, efficiently serving multiple adapters poses deployment challenges. While merging adapters into the base model eliminates runtime overhead, it hinders model sharing across tasks, introduces potential numerical instability on quantized models, and complicates deployment in environments with static computational graphs. Conversely, serving unmerged adapters avoids these issues but comes at the cost of increased inference latency. Through analysis of LoRA adapters on GPUs, we attribute this latency primarily to segmented function calls.  To address this, we propose Grouped Adaptive Weight Sharing (GAWS), a novel adapter design based on structured Kronecker product decomposition. Experiments on T5, GPT-2 Large, and LLaMA-3B show that GAWS reduces latency to about 42\% of the gap between LoRA and the base model, while maintaining parameter efficiency and comparable accuracy.  This positions GAWS as an effective solution for efficient multitask deployment.
+> **Grouped Adaptive Weight Sharing (GAWS)**, an inference-efficient adapter design based on structured Kronecker product decomposition.
 
-## Quickstart
+GAWS reduces runtime overhead while preserving the parameter efficiency and adaptation capability of LoRA. Extensive experiments on **T5-3B, GPT-2 Large, LLaMA 3.2-3B, and RoBERTa-Large** demonstrate that GAWS achieves a strong accuracy–latency trade-off.
 
-Clone the repository and install the peft library:
+Specifically, GAWS reduces inference latency to approximately **40% of the latency gap between unmerged LoRA and the base model**, making it a Pareto-efficient solution for deploying adapted large language models in latency-sensitive environments.
+
+---
+
+
+## 🚀 Quickstart
+
+### 📥 Installation
+
+Clone the repository and install the modified PEFT library:
 
 ```bash
 git clone <insert_github_repository>
@@ -32,6 +43,10 @@ cd GAWS/peft
 pip install -r requirements.txt
 pip install .
 ```
+
+
+
+### 🔧 Using GAWS
 
 Prepare a model for training with GAWS by wrapping the base model and GAWS configuration with `get_peft_model`.
 
@@ -112,7 +127,38 @@ print(tokenizer.batch_decode(outputs, skip_special_tokens=True)[0])
 
 ```
 
-## Contact
 
-If you have any questions, please create an issue on this repository or contact at []
+---
+##  📚 Citation
 
+If you find GAWS useful in your research, please cite:
+
+```bash
+@inproceedings{alsuradi-etal-2026-grouped,
+    title = "Grouped Adaptive Weight Sharing ({GAWS}): An Inference-Efficient Adaptation Method for Large Language Models",
+    author = "Alsuradi, Eman  and
+      Lee, Junhyun  and
+      Lee, Kyenghun  and
+      Ko, Hyeonmok  and
+      Jubair, Fahed",
+    editor = "Liakata, Maria  and
+      Moreira, Viviane P.  and
+      Zhang, Jiajun  and
+      Jurgens, David",
+    booktitle = "Findings of the {A}ssociation for {C}omputational {L}inguistics: {ACL} 2026",
+    month = jul,
+    year = "2026",
+    address = "San Diego, California, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.findings-acl.1590/",
+    doi = "10.18653/v1/2026.findings-acl.1590",
+    pages = "31790--31806",
+    ISBN = "979-8-89176-395-1",
+}
+```
+
+---
+
+## 📬 Contact
+
+For questions, discussions, or bug reports, please open an issue in this repository or contact at eman.zaki@samsung.com.
